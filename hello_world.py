@@ -25,10 +25,8 @@ def tokenizeText():
     print len(set(tokens)), 'set of tokens'
     print fdist1.most_common(10)
 
-def frequencies():
-    #count of that word divided by the total number of samples
-
-
+#def frequencies():
+#count of that word divided by the total number of samples
 
 def getWordsFromFile(inF):
     "get a list of words from a text file"
@@ -41,5 +39,5 @@ def getWordsFromFile(inF):
     return words
     print(words)
 
-getWordsFromFile('en.txt')
+#getWordsFromFile('es.txt')
 tokenizeText()
