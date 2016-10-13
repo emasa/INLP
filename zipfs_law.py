@@ -15,35 +15,38 @@ def tokenizeByWhiteSpaces():
     unique_tokens = len(set(tokens))
     #create frquency distribution table and plot it
     fdist1 = nltk.FreqDist(tokens)
-    fdist1.plot(50, cumulative=False)
+    #fdist1.plot(50, cumulative=False)
     print len(raw), 'chars read'
     print len(tokens), 'tokens extracted'
     print len(fdist1), 'tokens unique'
     print fdist1.most_common(50)
     #print the 50 most frequent words
-    for word, frequency in fdist1.most_common(50):
-        print(u'{};{}'.format(word, frequency))
+   # for word, frequency in fdist1.most_common(50):
+    #    print(u'{};{}'.format(word, frequency))
+    print len(fdist1)
+    print fdist1.N(), 'funcion N'
+    import numpy as np
+    #frequency_total = {}
+    index = 1
+    #for word, frequency in fdist1.iteritems():
+    for word, frequency in fdist1.most_common():
+        #frequency_total = frequency / len(tokens)
+        #frequency_total.update({word:frequency / len(tokens)})
+        frequency_total = np.append(word,frequency/len(tokens))
+        K = index * frequency
+        index  += 1
+    print K
+    print index
 
-    for word, frequency in fdist1.most_common(50):
-        frequency_total = frequency / len(fdist1)
-        print frequency_total
+    #frequency_total.plot(50)
+        #print frequency_total, 'frequenc ', frequency, 'total ', len(tokens)
 
-    print unique_tokens/total_tokens, 'unicos/totales'
+   # print unique_tokens/total_tokens, 'unicos/totales'
+   # print len(frequency_total)
 #   print fdist1(10)
 #   print fdist1(1)/total_tokens
 #def frequencies():
 #count of that word divided by the total number of samples
-
-def getWordsFromFile(inF):
-    "get a list of words from a text file"
-    lines = map(lambda x: x.replace('\n', '').lower(), open(inF).readlines())
-    words = []
-    for line in lines:
-        for word in line.split():
-            words.append(word)
-    print len(words), 'words read'
-    return words
-    print(words)
 
 #getWordsFromFile('es.txt')
 tokenizeByWhiteSpaces()
