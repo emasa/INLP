@@ -111,14 +111,7 @@ if __name__ == '__main__':
     main(corpus_path=SPANISH_CORPUS, case_sensitive=False, keep_digits=True, keep_punctuation=True)
     print("\nCase insensitive & remove digits & remove punctuation:")
     main(corpus_path=SPANISH_CORPUS, case_sensitive=False, keep_digits=False, keep_punctuation=False)
-
-    if sys.version_info < (3,0):
-        print("\nWordnet lemmatizer feature don't support non-ascii characters (such as á, é, etc) in python 2.x")
-    else:
-        print("\nUse Lemmas & case insensitive & remove digits & remove punctuation:")
-        main(corpus_path=SPANISH_CORPUS, with_lemmas=True, case_sensitive=False, keep_digits=False,
-             keep_punctuation=False)
-
+    print("\nWordnet lemmatizer doesn't support spanish language")
     print("\nMove to char level: case insensitive & remove digits & remove punctuation:")
     main(corpus_path=SPANISH_CORPUS, with_words=False, case_sensitive=False, keep_digits=False, keep_punctuation=False)
 
@@ -130,14 +123,11 @@ if __name__ == '__main__':
     main(corpus_path=ENGLISH_CORPUS, with_words=False, show_stats=False, show_plots=True, show_top=True)
 
     wait_for_input("\nPress Enter to show plots and top words for Spanish corpus...")
-    if sys.version_info < (3,0):
-        print("\nWordnet lemmatizer feature don't support non-ascii characters (such as á, é, etc) in python 2.x")
-        main(corpus_path=SPANISH_CORPUS, with_lemmas=False, show_stats=False, show_plots=True, show_top=True)
-    else:
-        print("\nUse Lemmas & case insensitive & remove digits & remove punctuation:")
-        main(corpus_path=SPANISH_CORPUS, with_lemmas=True, show_stats=False, show_plots=True, show_top=True)
 
-    wait_for_input("\nPress Enter to show plots and top words for Spanish corpus in character level...")
+    print("\ncase insensitive & remove digits & remove punctuation:")
+    main(corpus_path=SPANISH_CORPUS, with_lemmas=False, show_stats=False, show_plots=True, show_top=True)
+
+    wait_for_input("\nPress Enter to show plots and top letters for Spanish corpus in character level...")
     main(corpus_path=SPANISH_CORPUS, with_words=False, show_stats=False, show_plots=True, show_top=True)
 
     wait_for_input("\nPress Enter to exit...")
