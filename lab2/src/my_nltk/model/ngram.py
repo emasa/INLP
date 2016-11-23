@@ -64,19 +64,11 @@ class NgramModel(object):
         """
         return np.log2(self.prob(word, context))
 
-    def _ngram_by_ctx(self, n, ctx):
-        assert n == len(ctx) + 1
-
-        if ctx:
-            return self.ngram_counter.ngrams[n][ctx]
-        else:
-            return self.ngram_counter.unigrams
-
     def _entropy_rec(self, n, ctx):
         """
         Calculate the approximate cross-entropy of the n-gram model in a recursive fashion.
         """
-        words = self._ngram_by_ctx(n, ctx).items()
+        words = self.ngram_counter.at_ctx(n, ctx).items()
         if n == self._order:
             p = np.array([self.prob(w, ctx) for w, _ in words])
             return np.dot(p, np.log2(p))

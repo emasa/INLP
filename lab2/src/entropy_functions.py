@@ -6,9 +6,9 @@ import nltk
 
 def remove_characters(input, chars_to_remove):
     import sys
-    if sys.version_info < (3,1):
+    if sys.version_info < (3,1) and isinstance(input, str):
         output = input.translate(None, chars_to_remove)
-    elif isinstance(input, unicode):
+    else:
         # Create a dictionary using a comprehension - this maps every character from
         # string.punctuation to None. Initialize a translation object from it.
         translator = str.maketrans({key: None for key in chars_to_remove})
@@ -59,13 +59,13 @@ def get_tagged_sents():
 def get_words_from_tagged_sents(tagged_sents):
     # chain returns a sequence of (word, tag)
     # zip(*) split in 2 sequences: words, tags
-
-    return zip(*itertools.chain(*tagged_sents))[0]
+    words, tags = zip(*itertools.chain(*tagged_sents))
+    return words
 
 
 def clean_tagged_sent(t_sent):
     # clean word and surround POS with <> to avoid ambiguity
-    t_sent = map(lambda w_t: (clean_text(str(w_t[0])), '<%s>' % (w_t[1],)), t_sent)
+    t_sent = map(lambda w_t: (clean_text(str(w_t[0])), str('<%s>' % (w_t[1],))), t_sent)
 
     # remove pairs which were cleaned in the previous step
     t_sent = filter(lambda w_t: w_t[0], t_sent)

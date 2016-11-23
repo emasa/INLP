@@ -102,8 +102,8 @@ class NgramCounter(object):
         self.ngrams_kwargs = {
             "pad_left": True,
             "pad_right": True,
-            "left_pad_symbol": "<s>",
-            "right_pad_symbol": "</s>"
+            "left_pad_symbol": str("<s>"),
+            "right_pad_symbol": str("</s>")
         }
         # While allowing whatever the user passes to override them
         self.ngrams_kwargs.update(ngrams_kwargs)
@@ -130,7 +130,7 @@ class NgramCounter(object):
     def _enumerate_ngram_orders(self):
         return enumerate(range(self.order, 1, -1))
 
-    def train_counts(self, training_text):
+    def train_counts2(self, training_text):
         # Note here "1" indicates an empty vocabulary!
         # See NgramModelVocabulary __len__ method for more.
         if len(self.vocabulary) <= 1:
@@ -154,18 +154,42 @@ class NgramCounter(object):
                     self.ngrams[ngram_order][trunc_context][word] += 1
                 self.unigrams[word] += 1
 
+    def train_counts(self, training_text):
+        # Note here "1" indicates an empty vocabulary!
+        # See NgramModelVocabulary __len__ method for more.
+        if len(self.vocabulary) <= 1:
+            raise EmptyVocabularyError("Cannot start counting ngrams until "
+                                       "vocabulary contains more than one item.")
+
+        for sent in training_text:
+            checked_sent = [self.check_against_vocab(word) for word in sent]
+
+            for n in range(1, self.order+1):
+                for ngram in self.to_ngrams(checked_sent, n):
+                    context, word = tuple(ngram[:-1]), ngram[-1]
+                    self.at_ctx(n, context)[word] += 1
+
+    def at_ctx(self, n, ctx):
+        assert n == len(ctx) + 1
+
+        if ctx:
+            return self.ngrams[n][ctx]
+        else:
+            return self.unigrams
+
     def check_against_vocab(self, word):
         if word in self.vocabulary:
             return word
         return self.unk_label
 
-    def to_ngrams(self, sequence):
-        """Wrapper around util.ngrams with usefull options saved during initialization.
+    def to_ngrams(self, sequence, n=None):
+        """Wrapper around util.ngrams with useful options saved during initialization.
 
         :param sequence: same as nltk.util.ngrams
         :type sequence: any iterable
         """
-        return ngrams(sequence, self.order, **self.ngrams_kwargs)
+        n = self.order if n is None else n
+        return ngrams(sequence, n, **self.ngrams_kwargs)
 
 @compat.python_2_unicode_compatible
 class SmoothNgramCounter(NgramCounter):
@@ -186,19 +210,21 @@ class SmoothNgramCounter(NgramCounter):
             return tagged_word
         return self.unk_label, self.unk_label
 
-    def to_ngrams(self, tagged_sequence):
+    def to_ngrams(self, tagged_sequence, n=None):
         """Wrapper around util.ngrams. Smooth the first _n_smooth components using
         the POS of each word.
 
         :param tagged_sequence: sequence of <word, tag>
         :type sequence: any iterable
         """
+        n = self.order if n is None else n
+
         # replace padding symbol with a tuple
         ngrams_kwargs = dict(self.ngrams_kwargs)
         ngrams_kwargs["left_pad_symbol"] = (ngrams_kwargs["left_pad_symbol"], ngrams_kwargs["left_pad_symbol"])
         ngrams_kwargs["right_pad_symbol"] = (ngrams_kwargs["right_pad_symbol"], ngrams_kwargs["right_pad_symbol"])
 
-        tagged_ngrams = ngrams(tagged_sequence, self.order, **ngrams_kwargs)
+        tagged_ngrams = ngrams(tagged_sequence, n, **ngrams_kwargs)
         smoothed_ngrams = []
         for t_ngram in tagged_ngrams:
             words, tags = zip(*t_ngram)
