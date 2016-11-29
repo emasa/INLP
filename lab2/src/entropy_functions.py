@@ -63,9 +63,9 @@ def get_words_from_tagged_sents(tagged_sents):
     return words
 
 
-def clean_tagged_sent(t_sent):
+def clean_tagged_sent(t_sent, **kwargs_cleaning):
     # clean word and surround POS with <> to avoid ambiguity
-    t_sent = map(lambda w_t: (clean_text(str(w_t[0])), str('<%s>' % (w_t[1],))), t_sent)
+    t_sent = map(lambda w_t: (clean_text(str(w_t[0]), **kwargs_cleaning), str('<%s>' % (w_t[1],))), t_sent)
 
     # remove pairs which were cleaned in the previous step
     t_sent = filter(lambda w_t: w_t[0], t_sent)

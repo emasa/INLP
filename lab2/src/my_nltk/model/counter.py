@@ -130,30 +130,6 @@ class NgramCounter(object):
     def _enumerate_ngram_orders(self):
         return enumerate(range(self.order, 1, -1))
 
-    def train_counts2(self, training_text):
-        # Note here "1" indicates an empty vocabulary!
-        # See NgramModelVocabulary __len__ method for more.
-        if len(self.vocabulary) <= 1:
-            raise EmptyVocabularyError("Cannot start counting ngrams until "
-                                       "vocabulary contains more than one item.")
-
-        for sent in training_text:
-            checked_sent = (self.check_against_vocab(word) for word in sent)
-            sent_start = True
-            for ngram in self.to_ngrams(checked_sent):
-                context, word = tuple(ngram[:-1]), ngram[-1]
-
-                if sent_start:
-                    for context_word in context:
-                        self.unigrams[context_word] += 1
-                    sent_start = False
-
-                for trunc_index, ngram_order in self._enumerate_ngram_orders():
-                    trunc_context = context[trunc_index:]
-                    # note that above line doesn't affect context on first iteration
-                    self.ngrams[ngram_order][trunc_context][word] += 1
-                self.unigrams[word] += 1
-
     def train_counts(self, training_text):
         # Note here "1" indicates an empty vocabulary!
         # See NgramModelVocabulary __len__ method for more.

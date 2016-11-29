@@ -77,17 +77,17 @@ class NgramModel(object):
             p_coeff = np.array([self._entropy_rec(n+1, tuple(list(ctx) + [w])) for w, _ in words])
             return np.dot(p, p_coeff)
 
-    def entropy(self):
+    def entropy(self, fresh=False):
         """
         Calculate the approximate cross-entropy of the n-gram model.
         """
         # store internal value to avoid re-calculating the entropy
-        if self._entropy is None:
+        if self._entropy is None or fresh:
             self._entropy = -self._entropy_rec(1, tuple())
 
         return self._entropy
 
-    def perplexity(self):
+    def perplexity(self, fresh=False):
         """
         Calculates the perplexity of the n-gram model.
         This is simply 2 ** cross-entropy.
@@ -96,4 +96,4 @@ class NgramModel(object):
         :type text: Iterable[str]
         """
 
-        return np.power(2.0, self.entropy())
+        return np.power(2.0, self.entropy(fresh))
